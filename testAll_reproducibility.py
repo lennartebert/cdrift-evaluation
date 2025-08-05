@@ -263,6 +263,98 @@ def testMartjushev_ADWIN(filepath, min_max_window_pair, pvalue, step_size, F1_LA
 
     return entries
 
+def deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha=1.0):
+    # create a dataframe from cp dictionary
+    dataset_df = pd.DataFrame(
+        [(w, cp) for w, cps in cp_em_all_window_sizes.items() for cp in cps],
+        columns=["window_size", "cp"]
+    )
+
+    # Sort by window size descending, then start index ascending
+    dataset_df = dataset_df.sort_values(by=["window_size", "cp"], ascending=[False, True]).reset_index(drop=True)
+
+    # Initialize support count and unify change type
+    dataset_df["support_count"] = 1
+    dataset_df["change_type"] = "any"
+
+    # Set to keep track of rows marked for removal
+    to_remove = set()
+
+    # Step 1: iterate over each change point from largest window size to smallest
+    for idx1, cp1 in dataset_df.iterrows():
+        if idx1 in to_remove:
+            continue  # skip if already removed in a previous match
+        
+        ws1 = cp1['window_size']           # current window size
+        si1 = cp1['cp']           # current start index
+        threshold = ws1 * alpha            # calculate matching threshold
+
+        # Step 2: find all change points from smaller window sizes
+        smaller_df = dataset_df[(dataset_df['window_size'] < ws1)].copy()
+
+        # Step 3: try to match cp1 to any smaller-window change point within threshold
+        for idx2, cp2 in smaller_df.iterrows():
+            if idx2 in to_remove:
+                continue  # skip if already matched
+
+            si2 = cp2['cp']
+
+            if abs(si2 - si1) <= threshold:
+                # A match is found — increment support count of the smaller window point
+                dataset_df.at[idx2, 'support_count'] += 1
+
+                # Mark the larger-window point for removal
+                to_remove.add(idx1)
+                break  # move to next outer loop point
+
+    # Drop marked rows and return clean index
+    cleaned_df = dataset_df.drop(index=to_remove).reset_index(drop=True)
+
+    # Return list of all cps
+    return list(cleaned_df['cp'])
+
+def testEarthMoverMultiWindow(filepath, window_sizes, alpha, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
+    LINE_NR = position
+
+    log = helpers.importLog(filepath, verbose=False)
+    logname = filepath.split('/')[-1].split('.')[0]
+
+    startTime = default_timer()
+
+    # Earth Mover's Distance
+    cp_em_all_window_sizes = {}
+    for window_size in window_sizes:
+        cp_em_single_window_size = earthmover.detect_change(log, window_size, step_size, show_progress_bar=show_progress_bar, progress_bar_pos=LINE_NR)
+        cp_em_all_window_sizes[window_size] = cp_em_single_window_size
+    
+    cp_em = deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha)
+
+    endTime = default_timer()
+    durStr = calcDurationString(startTime, endTime)
+
+    # Save Results #
+    new_entry = {
+        'Algorithm':"Earth Mover's Distance Multi Window", 
+        'Log Source': Path(filepath).parent.name,
+        'Log': logname,
+        'Window Sizes': ", ".join(map(str, window_sizes)),
+        'Alpha': alpha,
+        'SW Step Size': step_size,
+        'Detected Changepoints': cp_em,
+        'Actual Changepoints for Log': cp_locations,
+        'F1-Score': evaluation.F1_Score(detected=cp_em, known=cp_locations, lag=F1_LAG, zero_division=np.NaN),
+        'Average Lag': evaluation.get_avg_lag(detected_changepoints=cp_em, actual_changepoints=cp_locations, lag=F1_LAG),
+        'Duration': durStr,
+        'Duration (Seconds)': (endTime-startTime),
+        'Seconds per Case': (endTime-startTime) / len(log)
+    }
+
+    if os.path.exists("Reproducibility_Intermediate_Results"):
+        pd.DataFrame([new_entry]).to_csv(Path("Reproducibility_Intermediate_Results", "EarthmoverMultiWindow", f"{logname}_WIN{min(window_sizes)}TO{max(window_sizes)}.csv"), index=False)
+
+    return [new_entry]
+
+
 def testEarthMover(filepath, window_size, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
     LINE_NR = position
 
@@ -272,11 +364,6 @@ def testEarthMover(filepath, window_size, step_size, F1_LAG, cp_locations, posit
     startTime = default_timer()
 
     # Earth Mover's Distance
-    traces = earthmover.extractTraces(log)
-    # em_dists = earthmover.calculateDistSeries(traces, window_size, show_progressBar=show_progress_bar, progressBar_pos=LINE_NR)
-
-    # cp_em = earthmover.visualInspection(em_dists, window_size)
-
     cp_em = earthmover.detect_change(log, window_size, step_size, show_progress_bar=show_progress_bar, progress_bar_pos=LINE_NR)
 
     endTime = default_timer()

@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,Window Sizes,Alpha,SW Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Earth Mover's Distance,Ceravolo,sudden_trace_noise5_1000_pl,"100, 200, 300, 400, 500, 600",1,2,[],[499],,,00:00:09,9.725864899985027,0.009725864899985026
