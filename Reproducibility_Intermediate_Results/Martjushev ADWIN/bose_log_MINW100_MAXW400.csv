@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,P-Value,Min Adaptive Window,Max Adaptive Window,ADWIN Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Martjushev ADWIN J,Bose,bose_log,0.4,100,400,10,"[1119, 2365, 3623, 4804]","[1199, 2399, 3599, 4799]",1.0,35.75,00:00:48,48.95701450004708,0.008159502416674513

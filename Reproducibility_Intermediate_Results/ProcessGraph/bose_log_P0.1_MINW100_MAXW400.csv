@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,P-Value,Min Adaptive Window,Max Adaptive Window,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Process Graph Metrics,Bose,bose_log,0.1,100,400,"[1320, 2943, 3669]","[1199, 2399, 3599, 4799]",0.5714285714285715,95.5,00:00:24,24.524853099952452,0.004087475516658742

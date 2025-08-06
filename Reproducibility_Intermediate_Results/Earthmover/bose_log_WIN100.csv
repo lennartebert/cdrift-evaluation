@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,Window Size,SW Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Earth Mover's Distance,Bose,bose_log,100,2,"[1192, 1466, 2402, 3596, 5256]","[1199, 2399, 3599, 4799]",0.6666666666666665,4.333333333333333,00:01:28,88.4787278000731,0.014746454633345518

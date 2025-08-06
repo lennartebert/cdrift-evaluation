@@ -1,3 +1,4 @@
+import argparse
 import math
 from multiprocessing import Pool, RLock, freeze_support, cpu_count
 from timeit import default_timer
@@ -5,6 +6,8 @@ from timeit import default_timer
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import ast
+
 
 # CDrift Approaches
 from cdrift.approaches import earthmover, bose, martjushev, lcdd
@@ -262,6 +265,8 @@ def testMartjushev_ADWIN(filepath, min_max_window_pair, pvalue, step_size, F1_LA
         pd.DataFrame(entries).to_csv(Path("Reproducibility_Intermediate_Results", "Martjushev ADWIN", f"{logname}_MINW{min_window}_MAXW{max_window}.csv"), index=False)
 
     return entries
+
+
 def aggregate_change_points_by_window(cp_all_window_sizes, alpha=1.0):
     """
     Aggregates change points across window sizes by merging close ones,
@@ -278,7 +283,7 @@ def aggregate_change_points_by_window(cp_all_window_sizes, alpha=1.0):
     records = []
     for ws, cp_list in cp_all_window_sizes.items():
         for cp in cp_list:
-            support = np.log(ws) / np.log(max_ws)
+            support = 1
             records.append({
                 "cp": cp,
                 "window_size": ws,
@@ -316,7 +321,7 @@ def aggregate_change_points_by_window(cp_all_window_sizes, alpha=1.0):
 
 # --- Outer filtering function --- #
 
-def deduplicate_change_points_by_window(cp_all_window_sizes, alpha=1.0, min_required_windows=[100, 200]):
+def deduplicate_change_points_by_window(cp_all_window_sizes, alpha=1.0, min_support_windows=3):
     """
     Deduplicate change points by support-based filtering on top of aggregation.
 
@@ -326,8 +331,8 @@ def deduplicate_change_points_by_window(cp_all_window_sizes, alpha=1.0, min_requ
         Dictionary of form {window_size: [change_point_1, ...]}
     alpha : float
         Distance factor for merging similar change points
-    min_required_windows : list of int
-        List of window sizes required to support a change point
+    min_support_windows : int
+        Min number of windows supporting the change point.
 
     Returns
     -------
@@ -344,18 +349,14 @@ def deduplicate_change_points_by_window(cp_all_window_sizes, alpha=1.0, min_requ
     # handle no change point situations
     if aggregated_df.empty:
         return []
-
-    # Compute threshold based on desired minimum window sizes
-    max_ws = max(cp_all_window_sizes.keys())
-    min_support = sum(np.log(ws) / np.log(max_ws) for ws in min_required_windows)
-
-    # Filter
-    filtered_df = aggregated_df[aggregated_df["support"] >= min_support]
+  
+    # Filter per threshold
+    filtered_df = aggregated_df[aggregated_df["support"] >= min_support_windows]
 
     return list(filtered_df["cp"])
 
 
-def testEarthMoverMultiWindow(filepath, window_sizes, alpha, min_required_windows, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
+def testEarthMoverMultiWindow(filepath, window_sizes, alpha, min_support_windows, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
     LINE_NR = position
 
     log = helpers.importLog(filepath, verbose=False)
@@ -369,7 +370,7 @@ def testEarthMoverMultiWindow(filepath, window_sizes, alpha, min_required_window
         cp_em_single_window_size = earthmover.detect_change(log, window_size, step_size, show_progress_bar=show_progress_bar, progress_bar_pos=LINE_NR)
         cp_em_all_window_sizes[window_size] = cp_em_single_window_size
     
-    cp_em = deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha, min_required_windows)
+    cp_em = deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha, min_support_windows)
 
     endTime = default_timer()
     durStr = calcDurationString(startTime, endTime)
@@ -381,7 +382,7 @@ def testEarthMoverMultiWindow(filepath, window_sizes, alpha, min_required_window
         'Log': logname,
         'Window Sizes': f" ".join(map(str, window_sizes)),
         'Alpha': alpha,
-        'Min Required Windows': f" ".join(map(str, min_required_windows)),
+        'Min Support Windows': min_support_windows,
         'SW Step Size': step_size,
         'Detected Changepoints': cp_em,
         'Actual Changepoints for Log': cp_locations,
@@ -609,6 +610,31 @@ def get_logpaths_with_changepoints():
         for item in Path("EvaluationLogs","Ostovar").iterdir()
     ]
 
+    # Get true change points for Kraus synthetic dataset
+    # Path to the gold_standard.csv for Kraus
+    gold_standard_path = Path("EvaluationLogs/Kraus/gold_standard.csv")
+
+    # Load the CSV
+    df = pd.read_csv(gold_standard_path)
+
+    # Folder where the actual .xes.gz files are stored
+    log_folder = gold_standard_path.parent
+
+    # Append entries from CSV
+    for _, row in df.iterrows():
+        # Construct full path
+        log_name = row["log_name"]
+        full_path = (log_folder / log_name).as_posix()
+
+        # Parse list of change points
+        try:
+            changepoints = ast.literal_eval(row["change_point"])
+        except (ValueError, SyntaxError):
+            changepoints = []
+
+        # Append tuple
+        logPaths_Changepoints.append((full_path, changepoints))
+
     return logPaths_Changepoints
 
 
@@ -652,48 +678,94 @@ def build_arguments_list(config, logPaths_Changepoints, is_test_run=False):
     ]
     return arguments
 
+def write_results_to_buffer(new_rows, existing_df):
+    df_new = pd.DataFrame(new_rows)
+    if df_new.empty:
+        return existing_df
 
-def main(test_run:bool = False, num_cores:int = None):
+    all_columns = sorted(set(existing_df.columns).union(df_new.columns))
+
+    # Align both frames
+    existing_df = existing_df.reindex(columns=all_columns)
+    df_new = df_new.reindex(columns=all_columns)
+
+    # Append
+    updated_df = pd.concat([existing_df, df_new], ignore_index=True)
+    return updated_df
+
+# === Main execution ===
+def main(test_run: bool = False, num_cores: int = None):
     if num_cores is None:
-        num_cores = cpu_count() - 2
+        num_cores = max(1, os.cpu_count() - 2)
 
     logPaths_Changepoints = get_logpaths_with_changepoints()
 
-    ## Load the Arguments from testAll_config.yml ##
-    config = None
+    # Load config
     with open("testAll_config.yml", 'r') as stream:
         config = yaml.safe_load(stream)
     arguments = build_arguments_list(config, logPaths_Changepoints, is_test_run=test_run)
+    print(arguments)
 
-    ## Set up File Structure
+    # Prepare file structure
     for approach, approach_config in config["approaches"].items():
-        if approach_config["enabled"] == True:
+        if approach_config["enabled"]:
             Path("Reproducibility_Intermediate_Results", approach).mkdir(parents=True, exist_ok=True)
 
-    ## Run all experiments using multiprocessing ##
+    # Prepare result file buffer
+    results_file = "algorithm_results.csv" # old results file will be overwritten
+    results_df = pd.DataFrame()
+    results_file_columns = []
+
+    # Start execution
     time_start = default_timer()
-    freeze_support()  # for Windows support
-    tqdm.set_lock(RLock())  # for managing output contention
-    results = []
-    with Pool(num_cores,initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),)) as p:
+    freeze_support()
+    tqdm.set_lock(RLock())
+
+    # write every x iterations
+    write_every_x_iterations = 100
+    counter = 0
+    next_write_index = 0  # To track newly added rows
+
+    with Pool(num_cores, initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),)) as p:
         if config["meta-parameters"]["DO_SINGLE_BAR"]:
             for result in tqdm(p.imap(callFunction, arguments), desc="Calculating.. Completed PCD Instances", total=len(arguments)):
-                results.append(result)
+                if result is np.NaN:
+                    continue
+                flattened = [r for r in result]
+                results_df = write_results_to_buffer(flattened, results_df)
+
+                counter += 1
+                if counter % write_every_x_iterations == 0:
+                    new_rows = results_df.iloc[next_write_index:]
+                    if new_rows.empty:
+                        continue
+
+                    if results_file_columns == list(results_df.columns):
+                        # append to the CSV file
+                        new_rows.to_csv(results_file, index=False, mode='a', header=False)
+                    else:
+                        # write new CSV file
+                        results_df.to_csv(results_file, index=False)
+                        results_file_columns = list(results_df.columns)
+                    next_write_index = len(results_df)
         else:
             results = p.map(callFunction, arguments)
+            results = [r for r in results if r is not np.NaN]
+            flattened_results = [res for function_return in results for res in function_return]
+            results_df = write_results_to_buffer(flattened_results, results_df)
 
-    # Remove NaN return values from the results, source is Martjushev_ADWIN if the log is too short for the chosen windows
-    results = [result for result in results if not result == np.NaN]
+    # Final write
+    results_df.to_csv(results_file, index=False)
+    tqdm.write(f"[WRITE] Final results written to {results_file} with {len(results_df)} rows.")
 
     elapsed_time = math.floor(default_timer() - time_start)
-    # Write instead of print because of progress bars (although it shouldnt be a problem because they are all done)
     elapsed_formatted = datetime.strftime(datetime.utcfromtimestamp(elapsed_time), '%H:%M:%S')
-    tqdm.write(f"The execution took {elapsed_formatted}")
+    tqdm.write(f"[DONE] The execution took {elapsed_formatted}")
 
-
-    flattened_results = [res for function_return in results for res in function_return]
-    df = pd.DataFrame(flattened_results)
-    df.to_csv("algorithm_results.csv", index=False)
-
+# === Entry point ===
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Run drift detection evaluation.")
+    parser.add_argument("--test_run", action='store_true', help="If true, only performs evaluation on one log.")
+    args = parser.parse_args()
+
+    main(test_run=args.test_run)
