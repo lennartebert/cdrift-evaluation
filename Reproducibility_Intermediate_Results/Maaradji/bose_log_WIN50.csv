@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,Window Size,SW Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Maaradji Runs,Bose,bose_log,50,2,"[3604, 4802]","[1199, 2399, 3599, 4799]",0.6666666666666666,4.0,00:00:30,30.96531960007269,0.005160886600012115
