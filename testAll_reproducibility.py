@@ -262,58 +262,100 @@ def testMartjushev_ADWIN(filepath, min_max_window_pair, pvalue, step_size, F1_LA
         pd.DataFrame(entries).to_csv(Path("Reproducibility_Intermediate_Results", "Martjushev ADWIN", f"{logname}_MINW{min_window}_MAXW{max_window}.csv"), index=False)
 
     return entries
+def aggregate_change_points_by_window(cp_all_window_sizes, alpha=1.0):
+    """
+    Aggregates change points across window sizes by merging close ones,
+    preferring the closest match (not just the first found).
 
-def deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha=1.0):
-    # create a dataframe from cp dictionary
-    dataset_df = pd.DataFrame(
-        [(w, cp) for w, cps in cp_em_all_window_sizes.items() for cp in cps],
-        columns=["window_size", "cp"]
-    )
+    Returns a DataFrame with cp, window_size, support.
+    """
+    if not cp_all_window_sizes:
+        return pd.DataFrame(columns=["cp", "window_size", "support", "supporting_windows"])
 
-    # Sort by window size descending, then start index ascending
-    dataset_df = dataset_df.sort_values(by=["window_size", "cp"], ascending=[False, True]).reset_index(drop=True)
+    max_ws = max(cp_all_window_sizes.keys())
 
-    # Initialize support count and unify change type
-    dataset_df["support_count"] = 1
-    dataset_df["change_type"] = "any"
+    # Step 1: Flatten and initialize support + support set
+    records = []
+    for ws, cp_list in cp_all_window_sizes.items():
+        for cp in cp_list:
+            support = np.log(ws) / np.log(max_ws)
+            records.append({
+                "cp": cp,
+                "window_size": ws,
+                "support": support,
+                "supporting_windows": {ws}
+            })
 
-    # Set to keep track of rows marked for removal
-    to_remove = set()
+    # Sort by descending window size, then cp
+    records.sort(key=lambda x: (-x["window_size"], x["cp"]))
 
-    # Step 1: iterate over each change point from largest window size to smallest
-    for idx1, cp1 in dataset_df.iterrows():
-        if idx1 in to_remove:
-            continue  # skip if already removed in a previous match
-        
-        ws1 = cp1['window_size']           # current window size
-        si1 = cp1['cp']           # current start index
-        threshold = ws1 * alpha            # calculate matching threshold
+    merged_records = []
 
-        # Step 2: find all change points from smaller window sizes
-        smaller_df = dataset_df[(dataset_df['window_size'] < ws1)].copy()
+    for i, rec_a in enumerate(records):
+        candidates = []
 
-        # Step 3: try to match cp1 to any smaller-window change point within threshold
-        for idx2, cp2 in smaller_df.iterrows():
-            if idx2 in to_remove:
-                continue  # skip if already matched
+        # Find merge candidates in smaller window sizes
+        for j in range(i + 1, len(records)):
+            rec_b = records[j]
+            if rec_b["window_size"] >= rec_a["window_size"]:
+                continue  # only merge into smaller window
 
-            si2 = cp2['cp']
+            dist = abs(rec_a["cp"] - rec_b["cp"])
+            if dist <= rec_a["window_size"] * alpha:
+                candidates.append((dist, rec_b))
 
-            if abs(si2 - si1) <= threshold:
-                # A match is found — increment support count of the smaller window point
-                dataset_df.at[idx2, 'support_count'] += 1
+        # Choose the closest candidate (if any)
+        if candidates:
+            _, closest = min(candidates, key=lambda x: x[0])
+            closest["support"] += rec_a["support"]
+            closest["supporting_windows"] |= rec_a["supporting_windows"]
+        else:
+            merged_records.append(rec_a)
 
-                # Mark the larger-window point for removal
-                to_remove.add(idx1)
-                break  # move to next outer loop point
+    return pd.DataFrame(merged_records)
 
-    # Drop marked rows and return clean index
-    cleaned_df = dataset_df.drop(index=to_remove).reset_index(drop=True)
+# --- Outer filtering function --- #
 
-    # Return list of all cps
-    return list(cleaned_df['cp'])
+def deduplicate_change_points_by_window(cp_all_window_sizes, alpha=1.0, min_required_windows=[100, 200]):
+    """
+    Deduplicate change points by support-based filtering on top of aggregation.
 
-def testEarthMoverMultiWindow(filepath, window_sizes, alpha, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
+    Parameters
+    ----------
+    cp_em_all_window_sizes : dict
+        Dictionary of form {window_size: [change_point_1, ...]}
+    alpha : float
+        Distance factor for merging similar change points
+    min_required_windows : list of int
+        List of window sizes required to support a change point
+
+    Returns
+    -------
+    list of int
+        Deduplicated and filtered list of change points
+    """
+    if not cp_all_window_sizes:
+        return []
+
+
+    # Aggregate and merge support
+    aggregated_df = aggregate_change_points_by_window(cp_all_window_sizes, alpha)
+
+    # handle no change point situations
+    if aggregated_df.empty:
+        return []
+
+    # Compute threshold based on desired minimum window sizes
+    max_ws = max(cp_all_window_sizes.keys())
+    min_support = sum(np.log(ws) / np.log(max_ws) for ws in min_required_windows)
+
+    # Filter
+    filtered_df = aggregated_df[aggregated_df["support"] >= min_support]
+
+    return list(filtered_df["cp"])
+
+
+def testEarthMoverMultiWindow(filepath, window_sizes, alpha, min_required_windows, step_size, F1_LAG, cp_locations, position, show_progress_bar=True):
     LINE_NR = position
 
     log = helpers.importLog(filepath, verbose=False)
@@ -327,7 +369,7 @@ def testEarthMoverMultiWindow(filepath, window_sizes, alpha, step_size, F1_LAG, 
         cp_em_single_window_size = earthmover.detect_change(log, window_size, step_size, show_progress_bar=show_progress_bar, progress_bar_pos=LINE_NR)
         cp_em_all_window_sizes[window_size] = cp_em_single_window_size
     
-    cp_em = deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha)
+    cp_em = deduplicate_change_points_by_window(cp_em_all_window_sizes, alpha, min_required_windows)
 
     endTime = default_timer()
     durStr = calcDurationString(startTime, endTime)
@@ -337,8 +379,9 @@ def testEarthMoverMultiWindow(filepath, window_sizes, alpha, step_size, F1_LAG, 
         'Algorithm':"Earth Mover's Distance Multi Window", 
         'Log Source': Path(filepath).parent.name,
         'Log': logname,
-        'Window Sizes': ", ".join(map(str, window_sizes)),
+        'Window Sizes': f" ".join(map(str, window_sizes)),
         'Alpha': alpha,
+        'Min Required Windows': f" ".join(map(str, min_required_windows)),
         'SW Step Size': step_size,
         'Detected Changepoints': cp_em,
         'Actual Changepoints for Log': cp_locations,

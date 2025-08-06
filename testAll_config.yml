@@ -4,7 +4,8 @@ approaches:
     enabled: True
     params:
       window_sizes: [[100, 200, 300, 400, 500, 600]]
-      alpha: [1]
+      min_required_windows: [[100, 200, 300]]
+      alpha: [0.5]
       step_size: [2]
   # Bose:
   #   function: "testBose"
