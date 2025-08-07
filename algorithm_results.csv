@@ -1,2 +1,152 @@
-Algorithm,Log Source,Log,P-Value,Min Adaptive Window,Max Adaptive Window,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
-Process Graph Metrics,Bose,bose_log,0.1,100,400,"[1320, 2943, 3669]","[1199, 2399, 3599, 4799]",0.5714285714285715,95.5,00:00:16,16.800521099939942,0.0028000868499899905
+Algorithm,Log Source,Log,Window Sizes,Alpha,Min Required Windows,SW Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_IRO,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:46,46.57873414299684,0.04657873414299683
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_cb,100 200 300 400 500 600,0.5,100 200 300,2,[452],[499],1.0,47.0,00:00:19,19.73308171899407,0.019733081718994072
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_IOR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:18,18.43789709598059,0.01843789709598059
+Earth Mover's Distance Multi Window,Ostovar,Nested_ORI_output_ORI_2,100 200 300 400 500 600,0.5,100 200 300,2,"[936, 1932]","[999, 1999]",1.0,65.0,06:33:49,23629.589742640994,7.87915629964688
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialMove_output_SerialMove_5,100 200 300 400 500 600,0.5,100 200 300,2,"[944, 1950]","[999, 1999]",1.0,52.0,06:18:52,22732.13694806202,7.579905617893305
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialRemoval_output_SerialRemoval,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1946]","[999, 1999]",1.0,64.0,06:10:54,22254.63565403002,7.42068544649217
+Earth Mover's Distance Multi Window,Ostovar,Composite_RIO_output_RIO,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1944]","[999, 1999]",1.0,56.0,05:33:37,20017.57580940699,6.674750186531174
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_re,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:17,17.694563500001095,0.017694563500001096
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_sw,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:13,13.934681067999918,0.013934681067999917
+Earth Mover's Distance Multi Window,Ostovar,Composite_IRO_output_IRO,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1944]","[999, 1999]",1.0,52.0,02:50:09,10209.730477958015,3.404378285414477
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_rp,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:18,18.014008983009262,0.018014008983009262
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialRemoval_output_SerialRemoval_2,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1948]","[999, 1999]",1.0,63.0,04:48:08,17288.388106408005,5.764717608005337
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialRemoval_output_SerialRemoval_5,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1954]","[999, 1999]",1.0,60.0,02:41:37,9697.237204828998,3.233490231686895
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_cp,100 200 300 400 500 600,0.5,100 200 300,2,[442],[499],1.0,57.0,00:00:15,15.674020448990632,0.015674020448990633
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_cd,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:11,11.478011671017157,0.011478011671017157
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_cp,100 200 300 400 500 600,0.5,100 200 300,2,[442],[499],1.0,57.0,00:00:20,20.42157675200724,0.02042157675200724
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_cf,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:14,14.429004550998798,0.014429004550998797
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelRemoval_output_ParallelRemoval_5,100 200 300 400 500 600,0.5,100 200 300,2,"[1774, 1002]","[999, 1999]",0.5,3.0,03:37:06,13026.569082985021,4.343637573519514
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_cf,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:07,7.9720604959875345,0.007972060495987535
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_pl,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:08,8.684689173998777,0.008684689173998776
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Substitute_output_Substitute,100 200 300 400 500 600,0.5,100 200 300,2,"[946, 1942]","[999, 1999]",1.0,55.0,05:32:17,19937.276311619004,6.647974762127044
+Earth Mover's Distance Multi Window,Ostovar,Nested_OIR_output_OIR_2,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1928]","[999, 1999]",1.0,60.0,05:41:09,20469.923887351004,6.825583156835947
+Earth Mover's Distance Multi Window,Ostovar,Composite_ROI_output_ROI_2,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1940]","[999, 1999]",1.0,54.0,05:29:33,19773.858912785014,6.593484132305774
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_cf,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:12,12.227624235994881,0.012227624235994881
+Earth Mover's Distance Multi Window,Ostovar,Composite_ORI_output_ORI_5,100 200 300 400 500 600,0.5,100 200 300,2,"[932, 1932]","[999, 1999]",1.0,67.0,06:34:43,23683.823926706013,7.897240389031682
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_OIR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:53,53.139799650001805,0.053139799650001804
+Earth Mover's Distance Multi Window,Ostovar,Composite_ROI_output_ROI_5,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1940]","[999, 1999]",1.0,54.0,03:01:12,10872.361236884986,3.625328855246744
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalToSequence_output_ConditionalToSequence,100 200 300 400 500 600,0.5,100 200 300,2,"[952, 1956]","[999, 1999]",1.0,45.0,05:40:00,20400.101332485996,6.802301211232409
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_cb,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:16,16.177078667009482,0.016177078667009483
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_pm,100 200 300 400 500 600,0.5,100 200 300,2,[414],[499],1.0,85.0,00:00:16,16.26378486599424,0.016263784865994238
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_sw,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:13,13.397634244000074,0.013397634244000074
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_RIO,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:09,9.870498736010632,0.009870498736010631
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_rp,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:14,14.755865567014553,0.014755865567014553
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_OIR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:57,57.37729231402045,0.05737729231402045
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Skip_output_Skip,100 200 300 400 500 600,0.5,100 200 300,2,"[1492, 964, 1952]","[999, 1999]",0.8,41.0,03:49:27,13767.93858604398,4.590843143062347
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalRemoval_output_ConditionalRemoval_2,100 200 300 400 500 600,0.5,100 200 300,2,"[1806, 946]","[999, 1999]",1.0,123.0,02:27:14,8834.955096898018,2.9459670213064415
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_pm,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:14,14.827193713979796,0.014827193713979796
+Earth Mover's Distance Multi Window,Ostovar,Nested_ROI_output_ROI_2,100 200 300 400 500 600,0.5,100 200 300,2,"[1938, 954]","[999, 1999]",1.0,53.0,02:42:40,9760.243263326003,3.254499254193399
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_cb,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:23,23.735953873983817,0.023735953873983816
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Swap_output_Swap,100 200 300 400 500 600,0.5,100 200 300,2,"[930, 1938]","[999, 1999]",1.0,65.0,02:40:34,9634.17184176101,3.2124614343984694
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Loop_output_Loop_5,100 200 300 400 500 600,0.5,100 200 300,2,"[962, 1954]","[999, 1999]",1.0,41.0,03:41:01,13261.43153881401,4.421951163325779
+Earth Mover's Distance Multi Window,Ostovar,Composite_IRO_output_IRO_2,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1944]","[999, 1999]",1.0,56.0,05:18:15,19095.223190432007,6.367196795742583
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_lp,100 200 300 400 500 600,0.5,100 200 300,2,[454],[499],1.0,45.0,00:00:34,34.03070217900677,0.034030702179006764
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Loop_output_Loop_2,100 200 300 400 500 600,0.5,100 200 300,2,"[956, 1932]","[999, 1999]",1.0,55.0,03:13:12,11592.447711995017,3.865437716570529
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelMove_output_ParallelMove_5,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1942]","[999, 1999]",1.0,66.0,04:20:31,15631.227062719001,5.2121464030406806
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_RIO,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:12,12.707423914980609,0.01270742391498061
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalMove_output_ConditionalMove,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1944]","[999, 1999]",1.0,52.0,06:24:40,23080.826981250982,7.696174385212065
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalRemoval_output_ConditionalRemoval_5,100 200 300 400 500 600,0.5,100 200 300,2,"[946, 1934]","[999, 1999]",1.0,59.0,02:53:06,10386.846517271013,3.46343665130744
+Earth Mover's Distance Multi Window,Ostovar,Composite_OIR_output_OIR_2,100 200 300 400 500 600,0.5,100 200 300,2,"[944, 1938]","[999, 1999]",1.0,58.0,05:21:19,19279.634377927025,6.428687688538521
+Earth Mover's Distance Multi Window,Ostovar,Nested_IRO_output_IRO_5,100 200 300 400 500 600,0.5,100 200 300,2,"[2548, 940, 1916]","[999, 1999]",0.8,71.0,06:57:36,25056.529152397998,8.354961371256419
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_cp,100 200 300 400 500 600,0.5,100 200 300,2,[444],[499],1.0,55.0,00:01:55,115.97052695101593,0.11597052695101592
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_sw,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:09,9.476629588985816,0.009476629588985815
+Earth Mover's Distance Multi Window,Bose,bose_log,100 200 300 400 500 600,0.5,100 200 300,2,"[4802, 1192, 2402, 3596]","[1199, 2399, 3599, 4799]",1.0,4.0,00:53:43,3223.598866796994,0.537266477799499
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalMove_output_ConditionalMove_5,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1944]","[999, 1999]",1.0,52.0,05:48:08,20888.755725634022,6.965240321985336
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialMove_output_SerialMove_2,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1942]","[999, 1999]",1.0,53.0,03:18:29,11909.115473172016,3.971028834002006
+Earth Mover's Distance Multi Window,Ostovar,Nested_ROI_output_ROI_5,100 200 300 400 500 600,0.5,100 200 300,2,"[954, 1938]","[999, 1999]",1.0,53.0,05:48:24,20904.268236730015,6.970412883204406
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_IRO,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:32,32.23793967597885,0.03223793967597885
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_pm,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:12,12.281749117973959,0.012281749117973959
+Earth Mover's Distance Multi Window,Ostovar,Nested_RIO_output_RIO_5,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1940]","[999, 1999]",1.0,54.0,05:25:46,19546.167772179993,6.517561777985993
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelMove_output_ParallelMove,100 200 300 400 500 600,0.5,100 200 300,2,"[938, 1946]","[999, 1999]",1.0,57.0,06:34:07,23647.216178921983,7.8850337375531785
+Earth Mover's Distance Multi Window,Ostovar,Nested_ORI_output_ORI_5,100 200 300 400 500 600,0.5,100 200 300,2,"[936, 1932]","[999, 1999]",1.0,65.0,07:12:56,25976.459890817,8.66170719933878
+Earth Mover's Distance Multi Window,Ostovar,Composite_ORI_output_ORI_2,100 200 300 400 500 600,0.5,100 200 300,2,"[928, 1932]","[999, 1999]",1.0,69.0,07:56:20,28580.174253025005,9.529901384803269
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelRemoval_output_ParallelRemoval,100 200 300 400 500 600,0.5,100 200 300,2,"[1002, 1690]","[999, 1999]",0.5,3.0,06:27:34,23254.401392133004,7.754051814649218
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_ROI,100 200 300 400 500 600,0.5,100 200 300,2,[488],[499],1.0,11.0,00:00:27,27.83583868201822,0.02783583868201822
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Loop_output_Loop,100 200 300 400 500 600,0.5,100 200 300,2,"[962, 1932]","[999, 1999]",1.0,52.0,07:12:57,25977.578852543986,8.662080310951646
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_OIR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:58,58.649018336989684,0.05864901833698968
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_cd,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:11,11.821848121006042,0.011821848121006041
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_sw,100 200 300 400 500 600,0.5,100 200 300,2,[442],[499],1.0,57.0,00:00:17,17.680050581984688,0.01768005058198469
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_cb,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:21,21.483108391985297,0.021483108391985296
+Earth Mover's Distance Multi Window,Ostovar,Nested_IRO_output_IRO,100 200 300 400 500 600,0.5,100 200 300,2,"[940, 1916]","[999, 1999]",1.0,71.0,07:44:19,27859.435078551993,9.289574884478824
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_IRO,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:03:50,230.74552512698574,0.23074552512698573
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_RIO,100 200 300 400 500 600,0.5,100 200 300,2,[440],[499],1.0,59.0,00:00:17,17.207614893995924,0.017207614893995925
+Earth Mover's Distance Multi Window,Ostovar,Composite_IOR_output_IOR_2,100 200 300 400 500 600,0.5,100 200 300,2,"[938, 1934]","[999, 1999]",1.0,63.0,06:32:32,23552.355523453007,7.853402975476161
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_pl,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:11,11.14568448299542,0.011145684482995421
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Skip_output_Skip_2,100 200 300 400 500 600,0.5,100 200 300,2,"[964, 1950]","[999, 1999]",1.0,42.0,02:48:34,10114.116150312999,3.3724962155095026
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_ROI,100 200 300 400 500 600,0.5,100 200 300,2,[478],[499],1.0,21.0,00:00:28,28.226769105996937,0.028226769105996936
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_cf,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:01:04,64.38965007400839,0.06438965007400839
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_pm,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:13,13.542996613017749,0.01354299661301775
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_lp,100 200 300 400 500 600,0.5,100 200 300,2,[454],[499],1.0,45.0,00:00:45,45.49970830400707,0.04549970830400707
+Earth Mover's Distance Multi Window,Ostovar,Atomic_SerialMove_output_SerialMove,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1950]","[999, 1999]",1.0,49.0,05:20:00,19200.943423913996,6.402448624179391
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Substitute_output_Substitute_5,100 200 300 400 500 600,0.5,100 200 300,2,"[938, 1938]","[999, 1999]",1.0,61.0,02:51:35,10295.951744144026,3.4331282908116125
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_cb,100 200 300 400 500 600,0.5,100 200 300,2,[452],[499],1.0,47.0,00:00:21,21.18086251799832,0.02118086251799832
+Earth Mover's Distance Multi Window,Ostovar,Nested_IRO_output_IRO_2,100 200 300 400 500 600,0.5,100 200 300,2,"[940, 1916]","[999, 1999]",1.0,71.0,05:06:27,18387.166597587,6.13109923227309
+Earth Mover's Distance Multi Window,Ostovar,Nested_ROI_output_ROI,100 200 300 400 500 600,0.5,100 200 300,2,"[1938, 954]","[999, 1999]",1.0,53.0,02:48:45,10125.765464649012,3.376380615088033
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_IOR,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:13,13.569994039979065,0.013569994039979065
+Earth Mover's Distance Multi Window,Ostovar,Nested_IOR_output_IOR,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1914]","[999, 1999]",1.0,80.0,07:43:04,27784.578176066978,9.264614263443473
+Earth Mover's Distance Multi Window,Ostovar,Nested_OIR_output_OIR_5,100 200 300 400 500 600,0.5,100 200 300,2,"[952, 1926]","[999, 1999]",1.0,60.0,04:42:37,16957.942762245017,5.6545324315588585
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_cd,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:05,5.637880003021564,0.005637880003021564
+Earth Mover's Distance Multi Window,Ostovar,Composite_ROI_output_ROI,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1940]","[999, 1999]",1.0,54.0,03:00:36,10836.765202134993,3.6134595538962966
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_OIR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:49,49.58984224600135,0.04958984224600135
+Earth Mover's Distance Multi Window,Ostovar,Composite_OIR_output_OIR_5,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1938]","[999, 1999]",1.0,59.0,03:56:23,14183.998194882995,4.729575923602199
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelMove_output_ParallelMove_2,100 200 300 400 500 600,0.5,100 200 300,2,"[948, 1908]","[999, 1999]",1.0,71.0,03:23:22,12202.78167586599,4.068950208691561
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_pl,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:06,6.694950624019839,0.006694950624019839
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_rp,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:13,13.82307839099667,0.01382307839099667
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalRemoval_output_ConditionalRemoval,100 200 300 400 500 600,0.5,100 200 300,2,"[960, 1806]","[999, 1999]",1.0,116.0,02:55:55,10555.22377279101,3.51958111796966
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_re,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:01:10,70.41021906700917,0.07041021906700917
+Earth Mover's Distance Multi Window,Ostovar,Nested_OIR_output_OIR,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1948]","[999, 1999]",1.0,50.0,05:59:16,21556.044534100016,7.187744092730916
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_RIO,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:18,18.493832893989747,0.01849383289398975
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_lp,100 200 300 400 500 600,0.5,100 200 300,2,[454],[499],1.0,45.0,00:00:40,40.48341717000585,0.04048341717000585
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Skip_output_Skip_5,100 200 300 400 500 600,0.5,100 200 300,2,"[964, 1918]","[999, 1999]",1.0,58.0,04:36:51,16611.478205108986,5.539005736948645
+Earth Mover's Distance Multi Window,Ostovar,Nested_RIO_output_RIO_2,100 200 300 400 500 600,0.5,100 200 300,2,"[954, 1940]","[999, 1999]",1.0,52.0,07:16:04,26164.561386330985,8.724428604978655
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_IRO,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:30,30.912230688001728,0.030912230688001727
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_RIO,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:15,15.840836988005321,0.01584083698800532
+Earth Mover's Distance Multi Window,Ostovar,Nested_IOR_output_IOR_5,100 200 300 400 500 600,0.5,100 200 300,2,"[922, 1878]","[999, 1999]",1.0,99.0,07:48:34,28114.596069805993,9.374656908904965
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_pl,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:01:15,75.24722327201744,0.07524722327201744
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_IOR,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:19,19.5362186729908,0.0195362186729908
+Earth Mover's Distance Multi Window,Ostovar,Composite_IOR_output_IOR,100 200 300 400 500 600,0.5,100 200 300,2,"[938, 1942]","[999, 1999]",1.0,59.0,05:35:58,20158.383056552993,6.721701586046347
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_IOR,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:23,23.997973874007585,0.023997973874007584
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_rp,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:13,13.295090319996234,0.013295090319996233
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelToSequence_output_ParallelToSequence,100 200 300 400 500 600,0.5,100 200 300,2,"[944, 1950]","[999, 1999]",1.0,52.0,03:34:19,12859.322769018996,4.287870213077357
+Earth Mover's Distance Multi Window,Ostovar,Composite_RIO_output_RIO_2,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1944]","[999, 1999]",1.0,56.0,06:12:16,22336.628654008993,7.4480255598562835
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_cp,100 200 300 400 500 600,0.5,100 200 300,2,[442],[499],1.0,57.0,00:01:05,65.89831405697623,0.06589831405697623
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_lp,100 200 300 400 500 600,0.5,100 200 300,2,[454],[499],1.0,45.0,00:00:43,43.48777636900195,0.043487776369001946
+Earth Mover's Distance Multi Window,Ostovar,Nested_RIO_output_RIO,100 200 300 400 500 600,0.5,100 200 300,2,"[954, 1940]","[999, 1999]",1.0,52.0,06:51:16,24676.996122459997,8.22840817687896
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_ROI,100 200 300 400 500 600,0.5,100 200 300,2,[492],[499],1.0,7.0,00:00:25,25.189513860008446,0.025189513860008447
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_re,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:20,20.196746089990484,0.020196746089990482
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Frequency_output_Frequency_2,100 200 300 400 500 600,0.5,100 200 300,2,"[954, 1528, 1974]","[999, 1999]",0.8,35.0,03:20:02,12002.54623114501,4.002182804649887
+Earth Mover's Distance Multi Window,Ostovar,Composite_RIO_output_RIO_5,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1944]","[999, 1999]",1.0,56.0,06:59:51,25191.973562622006,8.4001245623948
+Earth Mover's Distance Multi Window,Ostovar,Nested_IOR_output_IOR_2,100 200 300 400 500 600,0.5,100 200 300,2,"[924, 1878]","[999, 1999]",1.0,98.0,07:26:56,26816.377751255,8.941773174809937
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalMove_output_ConditionalMove_2,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1944]","[999, 1999]",1.0,52.0,06:39:53,23993.486486772017,8.000495660810943
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Swap_output_Swap_5,100 200 300 400 500 600,0.5,100 200 300,2,"[946, 1938]","[999, 1999]",1.0,57.0,03:20:39,12039.998888170987,4.01467118645248
+Earth Mover's Distance Multi Window,Ostovar,Nested_ORI_output_ORI,100 200 300 400 500 600,0.5,100 200 300,2,"[936, 1932]","[999, 1999]",1.0,65.0,03:41:24,13284.426783203002,4.42961880066789
+Earth Mover's Distance Multi Window,Ostovar,Composite_IOR_output_IOR_5,100 200 300 400 500 600,0.5,100 200 300,2,"[938, 1942]","[999, 1999]",1.0,59.0,05:50:21,21021.87128083798,7.009626969269083
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise20_1000_cd,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:09,9.986415338993538,0.009986415338993538
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelRemoval_output_ParallelRemoval_2,100 200 300 400 500 600,0.5,100 200 300,2,"[1784, 1002]","[999, 1999]",0.5,3.0,05:26:46,19606.787859847012,6.537775211686233
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Frequency_output_Frequency,100 200 300 400 500 600,0.5,100 200 300,2,"[954, 1974]","[999, 1999]",1.0,35.0,03:35:21,12921.680770678999,4.308663144607869
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_lp,100 200 300 400 500 600,0.5,100 200 300,2,[462],[499],1.0,37.0,00:00:34,34.68064920397592,0.03468064920397592
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_pm,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:09,9.325685361982323,0.009325685361982323
+Earth Mover's Distance Multi Window,Ostovar,Composite_OIR_output_OIR,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1938]","[999, 1999]",1.0,55.0,04:28:55,16135.82443362099,5.380401611744245
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Swap_output_Swap_2,100 200 300 400 500 600,0.5,100 200 300,2,"[930, 1938]","[999, 1999]",1.0,65.0,02:46:50,10010.226528266998,3.3378547943537837
+Earth Mover's Distance Multi Window,Ostovar,Composite_IRO_output_IRO_5,100 200 300 400 500 600,0.5,100 200 300,2,"[950, 1944]","[999, 1999]",1.0,52.0,05:57:59,21479.03279432899,7.162064953094028
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalToSequence_output_ConditionalToSequence_5,100 200 300 400 500 600,0.5,100 200 300,2,"[964, 1954]","[999, 1999]",1.0,40.0,05:21:56,19316.99851030801,6.4411465522867655
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Substitute_output_Substitute_2,100 200 300 400 500 600,0.5,100 200 300,2,"[946, 1942]","[999, 1999]",1.0,55.0,02:58:19,10699.772825542022,3.567780201914646
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_IOR,100 200 300 400 500 600,0.5,100 200 300,2,[444],[499],1.0,55.0,00:00:18,18.572699048992945,0.018572699048992943
+Earth Mover's Distance Multi Window,Ostovar,Composite_ORI_output_ORI,100 200 300 400 500 600,0.5,100 200 300,2,"[928, 1502, 1932]","[999, 1999]",0.8,69.0,04:15:12,15312.97284722302,5.106026291171397
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_cp,100 200 300 400 500 600,0.5,100 200 300,2,[448],[499],1.0,51.0,00:00:18,18.092580409982475,0.018092580409982476
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ConditionalToSequence_output_ConditionalToSequence_2,100 200 300 400 500 600,0.5,100 200 300,2,"[952, 1956]","[999, 1999]",1.0,45.0,05:44:36,20676.821605971985,6.894572059343776
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelToSequence_output_ParallelToSequence_5,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1948]","[999, 1999]",1.0,54.0,05:19:54,19194.278134110995,6.400226120077024
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_re,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:14,14.248484070005361,0.014248484070005361
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_IRO,100 200 300 400 500 600,0.5,100 200 300,2,[444],[499],1.0,55.0,00:00:23,23.92748446200858,0.02392748446200858
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_ROI,100 200 300 400 500 600,0.5,100 200 300,2,[478],[499],1.0,21.0,00:00:20,20.36205492299632,0.020362054922996323
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_cd,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:09,9.263442526978906,0.009263442526978907
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_pl,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:10,10.448312072985573,0.010448312072985572
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_rp,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:00:09,9.00768188299844,0.00900768188299844
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_re,100 200 300 400 500 600,0.5,100 200 300,2,[450],[499],1.0,49.0,00:00:16,16.082028828997863,0.016082028828997865
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise0_1000_ROI,100 200 300 400 500 600,0.5,100 200 300,2,[478],[499],1.0,21.0,00:00:16,16.302962989982916,0.016302962989982916
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise10_1000_OIR,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:50,50.82450516099925,0.050824505160999255
+Earth Mover's Distance Multi Window,Ostovar,Atomic_Frequency_output_Frequency_5,100 200 300 400 500 600,0.5,100 200 300,2,"[952, 1970]","[999, 1999]",1.0,38.0,04:15:54,15354.494411046995,5.119871427491495
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise5_1000_cf,100 200 300 400 500 600,0.5,100 200 300,2,[],[499],,,00:01:08,68.5527837240079,0.0685527837240079
+Earth Mover's Distance Multi Window,Ostovar,Atomic_ParallelToSequence_output_ParallelToSequence_2,100 200 300 400 500 600,0.5,100 200 300,2,"[942, 1948]","[999, 1999]",1.0,54.0,07:01:26,25286.09637337399,8.431509294222739
+Earth Mover's Distance Multi Window,Ceravolo,sudden_trace_noise15_1000_sw,100 200 300 400 500 600,0.5,100 200 300,2,[446],[499],1.0,53.0,00:00:12,12.606404834979912,0.012606404834979911

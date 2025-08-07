@@ -1,0 +1,2 @@
+Algorithm,Log Source,Log,Window Sizes,Alpha,Min Support Windows,SW Step Size,Detected Changepoints,Actual Changepoints for Log,F1-Score,Average Lag,Duration,Duration (Seconds),Seconds per Case
+Earth Mover's Distance Multi Window,Bose,bose_log,100 200 300 400 500 600,0.5,3,2,"[4802, 1192, 2402, 3596]","[1199, 2399, 3599, 4799]",1.0,4.0,00:33:46,2026.185211300035,0.3376975352166725
