@@ -5,3 +5,6 @@ Sample\ Logs/*
 evaluation_results_temp.csv
 # Ignore PyCache
 __pycache__
+
+# ignore complexity cache
+complexity_cache/

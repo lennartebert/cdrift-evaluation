@@ -14,6 +14,8 @@ from cdrift.approaches import maaradji as runs
 from cdrift.approaches.zheng import applyMultipleEps
 #Process Graph CPD
 from cdrift.approaches import process_graph_metrics as pm
+# Complexity Drift Detection
+from cdrift.approaches import complexity_drift_detection
 
 # Helper functions and evaluation functions
 from cdrift import evaluation
@@ -450,6 +452,76 @@ def testLCDD(filepath, window_pairs, stable_period, F1_LAG, cp_locations, positi
         pd.DataFrame([new_entry]).to_csv(Path("Reproducibility_Intermediate_Results", "LCDD", f"{logname}_CW{complete_window_size}_DW{detection_window_size}_SP{stable_period}.csv"), index=False)
     return [new_entry]
 
+def testComplexityDriftDetection(filepath, window_size, penalty, complexity_metric, min_consecutive_windows, F1_LAG, cp_locations, position=None, show_progress_bar=True):
+    """Test ComplexityDriftDetection approach.
+
+    Parameters
+    ----------
+    filepath : str
+        Path to the event log file.
+    window_size : int
+        Size of non-overlapping windows.
+    penalty : float
+        Penalty parameter for PELT algorithm.
+    complexity_metric : str
+        Name of the complexity metric to use.
+    min_consecutive_windows : int
+        Minimum number of consecutive windows for PELT.
+    F1_LAG : int
+        Lag window for F1 score calculation.
+    cp_locations : List[int]
+        List of actual change point locations.
+    position : int, optional
+        Position for progress bar. Default is None.
+    show_progress_bar : bool, optional
+        Whether to show progress bar. Default is True.
+
+    Returns
+    -------
+    List[dict]
+        List of result entry dictionaries.
+    """
+    log = helpers.importLog(filepath, verbose=False)
+    logname = filepath.split('/')[-1].split('.')[0]
+
+    startTime = default_timer()
+
+    # Detect change points using complexity-based approach
+    # Use logname as log_id for better caching
+    cp_detected = complexity_drift_detection.detect_change(
+        log=log,
+        window_size=window_size,
+        penalty=penalty,
+        complexity_metric=complexity_metric,
+        min_consecutive_windows=min_consecutive_windows,
+        log_id=logname,  # Use log name for caching
+    )
+
+    endTime = default_timer()
+    durStr = calcDurationString(startTime, endTime)
+
+    # Save Results #
+    new_entry = {
+        'Algorithm': "ComplexityDriftDetection",
+        'Log Source': Path(filepath).parent.name,
+        'Log': logname,
+        'Window Size': window_size,
+        'Penalty': penalty,
+        'Complexity Metric': complexity_metric,
+        'Min Consecutive Windows': min_consecutive_windows,
+        'Detected Changepoints': cp_detected,
+        'Actual Changepoints for Log': cp_locations,
+        'F1-Score': evaluation.F1_Score(detected=cp_detected, known=cp_locations, lag=F1_LAG, zero_division=np.NaN),
+        'Average Lag': evaluation.get_avg_lag(detected_changepoints=cp_detected, actual_changepoints=cp_locations, lag=F1_LAG),
+        'Duration': durStr,
+        'Duration (Seconds)': (endTime-startTime),
+        'Seconds per Case': (endTime-startTime) / len(log)
+    }
+    
+    if os.path.exists("Reproducibility_Intermediate_Results"):
+        pd.DataFrame([new_entry]).to_csv(Path("Reproducibility_Intermediate_Results", "ComplexityDriftDetection", f"{logname}_WIN{window_size}_PEN{penalty}_MET{complexity_metric.replace(' ', '_')}_MIN{min_consecutive_windows}.csv"), index=False)
+    return [new_entry]
+
 def callFunction(arg):
     """Wrapper for testing functions, as for the multiprocessing pool, one can only use one function, not multiple
 
@@ -478,6 +550,49 @@ def get_logpaths_with_changepoints():
         (item.as_posix(), [999,1999])
         for item in Path("EvaluationLogs","Ostovar").iterdir()
     ]
+
+    # Add Kraus logs if available
+    kraus_root = Path("EvaluationLogs","Kraus")
+    gold_standard_path = kraus_root / "gold_standard.csv"
+    if kraus_root.exists() and gold_standard_path.exists():
+        try:
+            gold_standard = pd.read_csv(gold_standard_path)
+            # Parse change points from the CSV
+            for _, row in gold_standard.iterrows():
+                log_name = row['log_name']
+                # Find the corresponding log file
+                log_file = kraus_root / log_name
+                if not log_file.exists():
+                    # Try with .xes.gz extension if not already present
+                    if not log_name.endswith('.xes.gz'):
+                        log_file = kraus_root / f"{log_name}.xes.gz"
+                
+                if log_file.exists():
+                    # Parse change_point column (it's a string representation of a list)
+                    cp_value = row['change_point']
+                    if isinstance(cp_value, str):
+                        try:
+                            change_points = eval(cp_value)  # Safe for list literals from CSV
+                        except:
+                            # Try parsing as comma-separated values
+                            change_points = [int(x.strip()) for x in cp_value.strip('[]').split(',') if x.strip()]
+                    elif isinstance(cp_value, (list, tuple)):
+                        change_points = list(cp_value)
+                    else:
+                        change_points = []
+                    
+                    logPaths_Changepoints.append((log_file.as_posix(), change_points))
+        except Exception as e:
+            print(f"Warning: Could not load Kraus logs from gold_standard.csv: {e}")
+            # Fallback: add all .xes.gz files in Kraus directory without change points
+            for item in kraus_root.glob("*.xes.gz"):
+                if "gold_standard" not in item.name:
+                    logPaths_Changepoints.append((item.as_posix(), []))
+    elif kraus_root.exists():
+        # Kraus directory exists but no gold_standard.csv - add all logs without change points
+        for item in kraus_root.glob("*.xes.gz"):
+            if "gold_standard" not in item.name:
+                logPaths_Changepoints.append((item.as_posix(), []))
 
     return logPaths_Changepoints
 
@@ -565,5 +680,83 @@ def main(test_run:bool = False, num_cores:int = None):
     df = pd.DataFrame(flattened_results)
     df.to_csv("algorithm_results.csv", index=False)
 
+def main_kraus_only(test_run:bool = False, num_cores:int = None):
+    """Run evaluation only for ComplexityDriftDetection on Kraus logs.
+    
+    Parameters
+    ----------
+    test_run : bool, optional
+        If True, use test run mode (fewer parameter combinations). Default is False.
+    num_cores : int, optional
+        Number of CPU cores to use. Default is cpu_count() - 2.
+    """
+    if num_cores is None:
+        num_cores = cpu_count() - 2
+
+    # Get all log paths, then filter to only Kraus logs
+    all_logPaths_Changepoints = get_logpaths_with_changepoints()
+    logPaths_Changepoints = [
+        (logpath, cp_locations)
+        for logpath, cp_locations in all_logPaths_Changepoints
+        if "Kraus" in logpath
+    ]
+    
+    if len(logPaths_Changepoints) == 0:
+        print("Warning: No Kraus logs found. Make sure EvaluationLogs/Kraus/ directory exists with log files.")
+        return
+
+    print(f"Found {len(logPaths_Changepoints)} Kraus log(s) to process.")
+
+    ## Load the Arguments from testAll_config.yml ##
+    config = None
+    with open("testAll_config.yml", 'r') as stream:
+        config = yaml.safe_load(stream)
+    
+    # Filter config to only ComplexityDriftDetection
+    filtered_config = {
+        "approaches": {
+            "ComplexityDriftDetection": config["approaches"]["ComplexityDriftDetection"]
+        },
+        "meta-parameters": config["meta-parameters"]
+    }
+    
+    arguments = build_arguments_list(filtered_config, logPaths_Changepoints, is_test_run=test_run)
+
+    ## Set up File Structure
+    Path("Reproducibility_Intermediate_Results", "ComplexityDriftDetection").mkdir(parents=True, exist_ok=True)
+
+    ## Run all experiments using multiprocessing ##
+    time_start = default_timer()
+    freeze_support()  # for Windows support
+    tqdm.set_lock(RLock())  # for managing output contention
+    results = []
+    with Pool(num_cores,initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),)) as p:
+        if filtered_config["meta-parameters"]["DO_SINGLE_BAR"]:
+            for result in tqdm(p.imap(callFunction, arguments), desc="Calculating.. Completed PCD Instances", total=len(arguments)):
+                results.append(result)
+        else:
+            results = p.map(callFunction, arguments)
+
+    # Remove NaN return values from the results
+    results = [result for result in results if not result == np.NaN]
+
+    elapsed_time = math.floor(default_timer() - time_start)
+    # Write instead of print because of progress bars (although it shouldnt be a problem because they are all done)
+    elapsed_formatted = datetime.strftime(datetime.utcfromtimestamp(elapsed_time), '%H:%M:%S')
+    tqdm.write(f"The execution took {elapsed_formatted}")
+
+    flattened_results = [res for function_return in results for res in function_return]
+    df = pd.DataFrame(flattened_results)
+    output_file = "algorithm_results_kraus_complexity_drift.csv"
+    df.to_csv(output_file, index=False)
+    print(f"Results saved to {output_file}")
+    print(f"Total results: {len(flattened_results)}")
+    print(f"Columns: {list(df.columns)}")
+
 if __name__ == '__main__':
-    main()
+    import sys
+    # Check if --kraus-only flag is provided
+    if len(sys.argv) > 1 and sys.argv[1] == '--kraus-only':
+        main_kraus_only()
+    else:
+        main()
