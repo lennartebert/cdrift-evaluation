@@ -63,7 +63,7 @@ def _generate_log_hash(log: EventLog, log_id: Optional[str] = None) -> str:
     return hashlib.md5(hash_input.encode()).hexdigest()
 
 
-def _get_cache_path(log_hash: str, window_size: int, first_window_start: int) -> Path:
+def _get_cache_path(log_hash: str, window_size: int, first_window_start: int, step_size: int) -> Path:
     """Get the cache file path for given parameters.
     
     Parameters
@@ -74,13 +74,15 @@ def _get_cache_path(log_hash: str, window_size: int, first_window_start: int) ->
         Window size.
     first_window_start : int
         First window start index.
+    step_size : int
+        Step size (offset) between windows.
     
     Returns
     -------
     Path
         Path to the cache file.
     """
-    cache_filename = f"{log_hash}_w{window_size}_s{first_window_start}.pkl"
+    cache_filename = f"{log_hash}_w{window_size}_s{first_window_start}_step{step_size}.pkl"
     return CACHE_DIR / cache_filename
 
 
@@ -91,6 +93,7 @@ def detect_change(
     complexity_metric: str,
     min_consecutive_windows: int = 2,
     first_window_start: int = 0,
+    step_size: Optional[int] = None,
     use_cache: bool = True,
     log_id: Optional[str] = None,
 ) -> List[int]:
@@ -101,7 +104,7 @@ def detect_change(
     log : EventLog
         The event log to analyze.
     window_size : int
-        Size of non-overlapping windows.
+        Size of windows.
     penalty : float
         Penalty parameter for PELT algorithm.
     complexity_metric : str
@@ -112,6 +115,9 @@ def detect_change(
         Default is 2.
     first_window_start : int, optional
         Starting index for the first window. Default is 0.
+    step_size : int, optional
+        Step size (offset) between windows. If None, defaults to window_size
+        (non-overlapping windows). Default is None.
     use_cache : bool, optional
         Whether to use cached complexity scores if available. Default is True.
     log_id : str, optional
@@ -123,13 +129,17 @@ def detect_change(
     List[int]
         List of detected change point trace indices.
     """
+    # Set default step_size to window_size if not provided (non-overlapping windows)
+    if step_size is None:
+        step_size = window_size
+    
     # Check if log is too short
     if len(log) < window_size + first_window_start:
         return []
 
     # Generate log hash for caching
     log_hash = _generate_log_hash(log, log_id)
-    cache_path = _get_cache_path(log_hash, window_size, first_window_start)
+    cache_path = _get_cache_path(log_hash, window_size, first_window_start, step_size)
     
     # Try to load from cache
     df = None
@@ -140,6 +150,7 @@ def detect_change(
                 # Verify cache matches expected parameters
                 if (cached_data.get('window_size') == window_size and
                     cached_data.get('first_window_start') == first_window_start and
+                    cached_data.get('step_size') == step_size and
                     cached_data.get('log_hash') == log_hash):
                     df = cached_data['df']
         except Exception as e:
@@ -164,7 +175,7 @@ def detect_change(
         df = assess_complexity_via_fixed_sized_windows(
             pm4py_log=log_sliced,
             window_size=window_size,
-            offset=window_size,  # Non-overlapping windows
+            offset=step_size,  # Use step_size parameter
             dataset_key="temp",
             configuration_name="temp",
             approach_name="temp",
@@ -185,6 +196,7 @@ def detect_change(
                     'df': df,
                     'window_size': window_size,
                     'first_window_start': first_window_start,
+                    'step_size': step_size,
                     'log_hash': log_hash,
                 }
                 with open(cache_path, 'wb') as f:
@@ -255,13 +267,25 @@ def detect_change(
     # Convert window indices to trace indices
     # PELT returns indices in the y array (0, 1, 2, ...), which correspond to
     # positions in the series after dropna(). Map these back to DataFrame rows.
+    # Convert window indices to trace indices
+    # PELT returns breakpoints as segment end indices (exclusive).
+    # A breakpoint at cp_window_idx means the change occurs at that position,
+    # i.e., between window (cp_window_idx-1) and window cp_window_idx.
+    # We use first_index of window cp_window_idx to mark the start of the new segment.
     change_points = []
     for cp_window_idx in cps_window_indices:
         if cp_window_idx < len(series_df_indices):
             # Get the DataFrame row index for this window
             df_row_idx = series_df_indices[cp_window_idx]
-            # Get the last_index (end of window) as the change point trace index
-            cp_trace_index = int(df.loc[df_row_idx, "last_index"])
+            # Get the first_index (start of window) as the change point trace index
+            # This marks the boundary where the change occurs
+            cp_trace_index = int(df.loc[df_row_idx, "first_index"])
+            change_points.append(cp_trace_index)
+        elif cp_window_idx > 0:
+            # Handle edge case: if cp_window_idx is out of bounds but > 0,
+            # use last_index of the previous window
+            prev_df_row_idx = series_df_indices[cp_window_idx - 1]
+            cp_trace_index = int(df.loc[prev_df_row_idx, "last_index"]) + 1
             change_points.append(cp_trace_index)
 
     return sorted(change_points)

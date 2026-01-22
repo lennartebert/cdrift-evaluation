@@ -688,10 +688,15 @@ def main_kraus_only(test_run:bool = False, num_cores:int = None):
     test_run : bool, optional
         If True, use test run mode (fewer parameter combinations). Default is False.
     num_cores : int, optional
-        Number of CPU cores to use. Default is cpu_count() - 2.
+        Number of CPU cores to use. Default is min(4, cpu_count() - 2) to avoid memory issues on Windows.
     """
     if num_cores is None:
-        num_cores = cpu_count() - 2
+        # Use fewer cores on Windows to avoid paging file issues
+        num_cores = min(4, max(1, cpu_count() - 2))
+    
+    print(f"Using {num_cores} CPU core(s) for multiprocessing.")
+    if num_cores > 4:
+        print("Warning: Using many cores may cause memory issues on Windows. Consider using --cores 2 or --cores 1 if you encounter paging file errors.")
 
     # Get all log paths, then filter to only Kraus logs
     all_logPaths_Changepoints = get_logpaths_with_changepoints()
@@ -757,6 +762,13 @@ if __name__ == '__main__':
     import sys
     # Check if --kraus-only flag is provided
     if len(sys.argv) > 1 and sys.argv[1] == '--kraus-only':
-        main_kraus_only()
+        # Check for --cores argument
+        num_cores = None
+        if len(sys.argv) > 2 and sys.argv[2] == '--cores' and len(sys.argv) > 3:
+            try:
+                num_cores = int(sys.argv[3])
+            except ValueError:
+                print(f"Warning: Invalid number of cores '{sys.argv[3]}', using default")
+        main_kraus_only(num_cores=num_cores)
     else:
         main()
